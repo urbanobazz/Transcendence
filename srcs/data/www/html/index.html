@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TRANSCENDENCE GANG</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="/static/style.css" type="text/css">
+	<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+	<audio id="message-sound" src="/static/uhoh.mp3"></audio>
+
+</head>
+<body>
+	<div id="terminal-header">
+		<header>
+			<h1>PONG</h1>
+			<nav id="nav">
+				<a id="homeButton" href="/" data-link>&lt;home&gt;</a>
+				<a id="loginButton" href="/login" data-link>&lt;login&gt;</a>
+				<a href="/play" data-link>&lt;play&gt;</a>
+			</nav>
+		</header>
+	</div>
+	<div id="terminal-main">
+		<main id="content">
+		</main>
+		<div id="error-message"></div>
+	</div>
+
+	<!-- Templates -->
+	<template id="homeTemplate">
+		<h1>welcome to the home page!</h1>
+		<h2>log in to chat and play against others</h2>
+	</template>
+
+	<template id="errorTemplate">
+		<h1>404: Oops we can't find it!</h1>
+	</template>
+
+	<!-- Bootstrap JavaScript (for interactivity like modals, tooltips) -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+	<script type="module" src="/static/js/script.js"></script>
+</body>
+</html>

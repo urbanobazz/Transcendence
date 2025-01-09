@@ -1,0 +1,30 @@
+
+## ALWAYS run this after updating models.py ##
+- python manage.py makemigrations <APP_NAME>
+- python manage.py migrate
+
+# Make a Project
+django-admin startproject <NAME>
+# make an APP
+py manage.py startapp <NAME>
+
+
+
+#test connection
+curl -X POST http://user_management:8000/register \
+     -H "Host: usermanagement" \
+     -H "Content-Type: application/json" \
+     -d '{"username": "your_username", "password": "your_password"}'
+
+# create dump file
+docker exec -t <db_container_id> pg_dump -U <username> <database_name> > <output_file>.sql
+--------------------
+docker exec -t db pg_dump -U manager user_management > dump.sql
+--------------------
+
+
+# check database
+-- psql -U manager -d user_management
+1. psql -U <username> -d <database_name>
+2. \dt
+3. SELECT * FROM <table_name>;

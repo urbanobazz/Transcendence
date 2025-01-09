@@ -1,0 +1,154 @@
+networks:
+  transcendence-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.20.0.0/27"
+          gateway: "172.20.0.1"
+
+services:
+  nginx:
+    hostname: nginx
+    depends_on:
+      - game_logic
+      - manager
+      - user_management
+    build: requirements/nginx
+    container_name: nginx
+    networks:
+      transcendence-network:
+        ipv4_address: 172.20.0.2
+    ports:
+      - "443:443"
+    volumes:
+      - pong_site:/var/www
+    restart: unless-stopped
+
+  game_logic:
+    hostname: game_logic
+    build: ./requirements/game_logic
+    container_name: game_logic
+    networks:
+      transcendence-network:
+        ipv4_address: 172.20.0.3
+    restart: unless-stopped
+    environment:
+      - DJANGO_SETTINGS_MODULE=game_logic_service.settings
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=WARNING
+      - DJANGO_LOG_LEVEL=WARNING
+      - SECRET_KEY=${SECRET_KEY}
+
+  manager:
+    hostname: manager
+    build: ./requirements/manager
+    container_name: manager
+    networks:
+      transcendence-network:
+        ipv4_address: 172.20.0.4
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=manager_service.settings
+      - REDIS_URL=redis://redis:6379/0
+      - GAME_LOGIC_WS=ws://game_logic:8002/ws/pong
+      - CHAT_WS=ws://pongchat:8003/ws/chat/
+      - AI_WS=ws://ai_opponent:8001/ws/default/
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=DEBUG
+      - DJANGO_LOG_LEVEL=WARNING
+      - TICK_RATE=0.05
+      - SECRET_KEY=${SECRET_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  redis:
+    hostname: redis
+    container_name: redis
+    build: ./requirements/redis
+    networks:
+      transcendence-network:
+        ipv4_address: 172.20.0.5
+    env_file:
+      - .env
+    environment:
+      - REDIS_PASS
+    restart: unless-stopped
+
+  user_management:
+    hostname: user_management
+    container_name: usermanagement
+    depends_on:
+      db:
+        condition: service_healthy
+    build: ./requirements/user_management
+    networks:
+      transcendence-network:
+        ipv4_address: 172.20.0.6
+    environment:
+      - DJANGO_SETTINGS_MODULE=management_service.settings
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=DEBUG
+      - DJANGO_LOG_LEVEL=WARNING
+      - SECRET_KEY=${SECRET_KEY}
+    restart: unless-stopped
+    volumes:
+      - pong_site:/var/transcendence_scripts/data
+
+  db:
+    hostname: postgres
+    container_name: db
+    build: ./requirements/db
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    restart: unless-stopped
+    networks:
+      transcendence-network:
+        ipv4_address: 172.20.0.7
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U manager -d user_management" ]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  ai_opponent:
+    hostname: ai_opponent
+    container_name: ai_opponent
+    build: ./requirements/ai_opponent
+    networks:
+      transcendence-network:
+        ipv4_address: 172.20.0.8
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+
+
+  pongchat:
+    hostname: pongchat
+    build: ./requirements/pongchat
+    container_name: pongchat
+    networks:
+      transcendence-network:
+        ipv4_address: 172.20.0.9
+    restart: unless-stopped
+    environment:
+      - DJANGO_SETTINGS_MODULE=chat_manager.settings
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=WARNING
+      - DJANGO_LOG_LEVEL=WARNING
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+
+volumes:
+  pong_site:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/www
+

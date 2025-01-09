@@ -1,0 +1,37 @@
+{
+	"message": "TYPE",
+	"input": {
+		"type": "KEYTYPE",
+		"key": "KEY"
+	},
+	"gs": {
+		"ball": {
+			"x": 5,
+			"y": "Y_COORD",
+			"dx": "X_SPEED",
+			"dy": "Y_SPEED"
+		},
+		"lpad": {
+			"score": "CURRENT_SCORE",
+			"x": 5,
+			"len": "LENGTH BONUS",
+			"pow": "POWER",
+			"speed": "SPEED BONUS"
+		},
+		"rpad": {
+			"score": "CURRENT_SCORE",
+			"x": "X_COORD",
+			"len": "LENGTH",
+			"pow": "POWER",
+			"speed": "SPEED BONUS"
+		},
+		"meta": {
+			"cwidth": "CANVAS WIDTH IN PX",
+			"cheight": "CANVAS height IN PX",
+			"bspeed": "DEFAULT BALL SPEED",
+			"pspeed": "DEFAULT PADDLE SPEED",
+			"grid": "DEFAULT GRID SIZE"
+		}
+
+	}
+}
