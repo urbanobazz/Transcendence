@@ -95,9 +95,9 @@ ASGI_APPLICATION = 'management_service.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'user_management',
-        'USER': 'manager',
-        'PASSWORD': '1234',
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'HOST': 'postgres',  # This should match the service name in docker-compose.yml
         'PORT': '5432',
     }

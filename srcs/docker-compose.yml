@@ -93,6 +93,9 @@ services:
       - LOG_LEVEL=DEBUG
       - DJANGO_LOG_LEVEL=WARNING
       - SECRET_KEY=${SECRET_KEY}
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
     restart: unless-stopped
     volumes:
       - pong_site:/var/transcendence_scripts/data
